@@ -1,1 +1,1 @@
-# Gogs Deploy
+# Gitea Deploy
