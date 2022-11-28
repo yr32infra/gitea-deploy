@@ -1,0 +1,100 @@
+version: '3.9'
+services:
+  gitea:
+    image: gitea/gitea:1.17.3@sha256:395098e77ecc0a6052c3b0f46736b16e586982e545734d8421c1727d82992b22
+    hostname: gitea
+    container_name: gitea__gitea
+    restart: unless-stopped
+
+    environment:
+      TZ: JST
+
+    volumes:
+      - type: volume
+        source: gitea_data
+        target: /data
+
+      - type: bind
+        source: /etc/timezone
+        target: /etc/timezone
+        read_only: true
+
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+
+    expose:
+      - 3000
+
+    networks:
+      - default
+      - outband
+
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  mariadb:
+    image: mariadb:10.9.3@sha256:813d8d1148068d86a48ea3801568b805b66199cda1b2d5e1e0989498106b852d
+
+    hostname: mariadb
+    container_name: gitea__mariadb
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: gitea
+      MYSQL_USER: gitea
+      MYSQL_PASSWORD: gitea
+      MYSQL_DATABASE: gitea
+
+    volumes:
+      - type: volume
+        source: mariadb_data
+        target: /var/lib/mysql
+
+    networks:
+      - default
+
+  cloudflared:
+    image: cloudflare/cloudflared:2022.10.3@sha256:d3840dadf665098fa7307aeec68f1ce8802437559cb06cf3863afcf963a02f6d
+    hostname: cloudflared
+    container_name: gitea__cloudflared
+    restart: unless-stopped
+
+    environment:
+      TUNNEL_METRICS: 0.0.0.0:9126
+      TUNNEL_LOGFILE: /dev/stdout
+
+    command: tunnel run --token ${TUNNEL_TOKEN}
+
+    networks:
+      default:
+      outband:
+      prometheus__cloudflared:
+        aliases:
+          - gitea__cloudflared
+
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+
+volumes:
+  gitea_data:
+    name: gitea__gitea_data
+  mariadb_data:
+    name: gitea__mariadb_data
+
+networks:
+  default:
+    name: gitea__default
+    internal: true
+
+  outband:
+    name: gitea__outband
+
+  prometheus__cloudflared:
+    name: prometheus__cloudflared 
+    external: true
