@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   gitea:
-    image: gitea/gitea:1.22.0@sha256:ff5addffde6abf6e57a7def08f45281eab2a86d2ff6cd92ac88ff84263a87547
+    image: gitea/gitea:1.22.3@sha256:76f516a1a8c27e8f8e9773639bf337c0176547a2d42a80843e3f2536787341c6
     hostname: gitea
     container_name: gitea__gitea
     restart: unless-stopped
