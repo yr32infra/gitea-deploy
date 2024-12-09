@@ -8,6 +8,7 @@ services:
 
     environment:
       TZ: JST
+      GITEA__service__REGISTER_MANUAL_CONFIRM: "true"
 
     volumes:
       - type: volume
