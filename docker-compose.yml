@@ -38,7 +38,7 @@ services:
           memory: 512m
 
   mariadb:
-    image: mariadb:11.5.2@sha256:9e7695800ab8fa72d75053fe536b090d0c9373465b32a073c73bc7940a2e8dbe
+    image: mariadb:11.6.2@sha256:a9547599cd87d7242435aea6fda22a9d83e2c06d16c658ef70d2868b3d3f6a80
 
     hostname: mariadb
     container_name: gitea__mariadb
